@@ -2,15 +2,13 @@ import { Scene } from 'phaser';
 
 export class Level1 extends Scene {
     constructor() {
-        super('Boot');
+        super('Level1');
         this.score = 0;
         this.scoreText = null;
         this.gameOver = false;
     }
 
     preload() {
-        //  The Boot Scene is typically used to load in any assets you require for your Preloader, such as a game logo or background.
-        //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
 
         this.load.image('background', 'assets/bg.png');
 
@@ -176,7 +174,7 @@ export class Level1 extends Scene {
     }
 
     restartGame() {
-        this.scene.start('Boot');
+        this.scene.start('Level1');
         this.gameOver = false;
     }
 
