@@ -1,4 +1,4 @@
-import { Boot } from './scenes/Boot';
+import { Level1 } from './scenes/level1';
 
 import { AUTO, Game } from 'phaser';
 
@@ -22,7 +22,7 @@ const config = {
         }
     },
     scene: [
-        Boot,
+        Level1,
         
     ]
 };

@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 
-export class Boot extends Scene {
+export class Level1 extends Scene {
     constructor() {
         super('Boot');
         this.score = 0;
