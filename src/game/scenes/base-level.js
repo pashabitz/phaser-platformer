@@ -8,49 +8,7 @@ export class BaseLevel extends Scene {
         this.gameOver = false;
     }
 
-    create() {
-        this.physics.world.setBounds(0, 0, 1600, 600);
-        this.cameras.main.setBounds(0, 0, 1600, 600);
 
-        this.bombs = this.physics.add.group();
-
-        this.player = this.physics.add.sprite(100, 450, 'dude');
-        this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
-
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-
-        this.addBomb();
-
-        this.platforms = this.physics.add.staticGroup();
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
-            .setScrollFactor(0);
-
-        this.cameras.main.startFollow(this.player);
-
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.input.on('pointerdown', this.restartGame, this);
-
-    }
     restartGame() {
         this.scene.start(this.key);
         this.gameOver = false;
@@ -122,5 +80,74 @@ export class BaseLevel extends Scene {
         player.anims.play('turn');
 
         this.gameOver = true;
+    }
+
+    create() {
+        this.physics.world.setBounds(0, 0, 1600, 600);
+        this.cameras.main.setBounds(0, 0, 1600, 600);
+
+        this.bombs = this.physics.add.group();
+
+        this.player = this.physics.add.sprite(100, 450, 'dude');
+        this.player.setBounce(0.2);
+        this.player.setCollideWorldBounds(true);
+
+        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
+        this.addBomb();
+
+        this.platforms = this.physics.add.staticGroup();
+        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
+            .setScrollFactor(0);
+
+        this.cameras.main.startFollow(this.player);
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [{ key: 'dude', frame: 4 }],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.input.on('pointerdown', this.restartGame, this);
+
+    }
+
+    update() {
+        if (this.gameOver) {
+            return;
+        }
+        if (this.cursors.left.isDown) {
+            this.player.setVelocityX(-280);
+
+            this.player.anims.play('left', true);
+        }
+        else if (this.cursors.right.isDown) {
+            this.player.setVelocityX(280);
+
+            this.player.anims.play('right', true);
+        }
+        else {
+            this.player.setVelocityX(0);
+
+            this.player.anims.play('turn');
+        }
+
+        if (this.cursors.up.isDown && this.player.body.touching.down) {
+            this.player.setVelocityY(-350);
+        }
     }
 }
