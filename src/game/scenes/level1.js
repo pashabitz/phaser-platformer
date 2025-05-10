@@ -50,10 +50,8 @@ export class Level1 extends BaseLevel {
             child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
         });
 
-        this.physics.add.collider(this.bombs, this.platforms);
 
 
-        this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, movingPlatform);
         this.physics.add.collider(this.stars, this.platforms);
         this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);

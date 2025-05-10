@@ -92,11 +92,15 @@ export class BaseLevel extends Scene {
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
         this.addBomb();
 
         this.platforms = this.physics.add.staticGroup();
+
+        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+        this.physics.add.collider(this.bombs, this.platforms);
+        this.physics.add.collider(this.player, this.platforms);
+
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
             .setScrollFactor(0);
 
