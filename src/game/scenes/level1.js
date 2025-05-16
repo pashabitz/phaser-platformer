@@ -18,7 +18,8 @@ export class Level1 extends BaseLevel {
             'assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
         );
-
+        this.load.image('jetpack', 'assets/jetpack.png');
+        this.registry.score = 0;
     }
 
     
@@ -38,18 +39,7 @@ export class Level1 extends BaseLevel {
         const spikes = this.physics.add.staticGroup();
         spikes.create(600, 366, 'spikes').setDepth(-1);
 
-
-
-        this.stars = this.physics.add.group({
-            key: 'star',
-            repeat: 15,
-            setXY: { x: 12, y: 0, stepX: 90 }
-        });
-
-        this.stars.children.iterate(function (child) {
-            child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
-        });
-
+        this.generateStars(15, 90);
 
 
         this.physics.add.collider(this.player, movingPlatform);
@@ -62,6 +52,7 @@ export class Level1 extends BaseLevel {
         this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
 
     }
+
 
 
     update() {

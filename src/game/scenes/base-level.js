@@ -3,14 +3,13 @@ import { Scene } from "phaser";
 export class BaseLevel extends Scene {
     constructor(key) {
         super(key);
-        this.score = 0;
         this.scoreText = null;
         this.gameOver = false;
     }
 
 
     restartGame() {
-        this.scene.start(this.key);
+        this.scene.start(this.scene.key);
         this.gameOver = false;
     }
 
@@ -27,10 +26,12 @@ export class BaseLevel extends Scene {
     }
     collectStar(player, star) {
         star.disableBody(true, true);
-        this.score += 10;
-        this.scoreText.setText('Score: ' + this.score);
+        this.registry.score += 10;
+        this.scoreText.setText('Score: ' + this.registry.score);
 
-        this.generateNewStars();
+        if (this.stars.countActive(true) === 0) {
+            this.moveToNextLevel();
+        }
     }
     generateNewStars() {
         if (this.stars.countActive(true) === 0) {
@@ -42,6 +43,16 @@ export class BaseLevel extends Scene {
             });
 
             this.addBomb();
+        }
+    }
+    moveToNextLevel() {
+        const levelNumber = this.scene.key.replace('Level', '');
+        const nextLevelNumber = parseInt(levelNumber) + 1;
+        const nextLevelKey = `Level${nextLevelNumber}`;
+        if (this.scene.get(nextLevelKey)) {
+            this.scene.start(nextLevelKey);
+        } else {
+            console.log('No more levels available.');
         }
     }
     makeMovingPlatform(x, y, speed, offset) {
@@ -61,6 +72,18 @@ export class BaseLevel extends Scene {
             onRepeat: () => { movingPlatform.setVelocityX(speed); } // Reset velocity on repeat
         });
         return movingPlatform;
+    }
+
+    generateStars(numStars, stepX) {
+        this.stars = this.physics.add.group({
+            key: 'star',
+            repeat: numStars,
+            setXY: { x: 12, y: 0, stepX }
+        });
+
+        this.stars.children.iterate(function (child) {
+            child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
+        });
     }
 
     hitBomb(player, bomb) {
@@ -101,7 +124,7 @@ export class BaseLevel extends Scene {
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.platforms);
 
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' })
+        this.scoreText = this.add.text(16, 16, 'Score: ' + this.registry.score, { fontSize: '32px', fill: '#000' })
             .setScrollFactor(0);
 
         this.cameras.main.startFollow(this.player);
@@ -136,12 +159,12 @@ export class BaseLevel extends Scene {
         }
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-280);
-
+            this.player.flipX = true;
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown) {
             this.player.setVelocityX(280);
-
+            this.player.flipX = false;
             this.player.anims.play('right', true);
         }
         else {
