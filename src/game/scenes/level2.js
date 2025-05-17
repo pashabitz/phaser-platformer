@@ -178,7 +178,7 @@ export class Level2 extends BaseLevel {
 
             if (this.fuelRemaining > 0) {
                 const timeSinceAttached = new Date().getTime() - this.jetpackAttachedAt;
-                this.fuelRemaining = Math.max(0, 100 - Math.floor(timeSinceAttached / 100));
+                this.fuelRemaining = Math.max(0, 100 - Math.floor(timeSinceAttached / 100) * 2);
                 this.fuelText.setText(`Fuel: ${this.fuelRemaining}`);
                 if (this.fuelRemaining <= 0) {
                     this.deactivateJetpack();
