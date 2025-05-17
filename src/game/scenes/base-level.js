@@ -56,12 +56,12 @@ export class BaseLevel extends Scene {
             console.log('No more levels available.');
         }
     }
-    makeMovingPlatform(x, y, speed, offset) {
+    makeMovingPlatform(x, y, speed, offset, xScale = 1) {
         const movingPlatform = this.physics.add.image(x, y, 'ground');
         movingPlatform.setImmovable(true);
         movingPlatform.body.allowGravity = false;
         movingPlatform.setVelocityX(speed); // Initial velocity
-
+        movingPlatform.setScale(xScale, 1); // Scale the platform
         this.tweens.add({
             targets: movingPlatform,
             x: movingPlatform.x + offset, // Move 200 pixels to the right
