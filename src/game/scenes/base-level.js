@@ -5,6 +5,7 @@ export class BaseLevel extends Scene {
         super(key);
         this.scoreText = null;
         this.gameOver = false;
+        this.isFlying = false;
     }
 
 
@@ -86,6 +87,10 @@ export class BaseLevel extends Scene {
         });
     }
 
+    doGameOver() {
+        this.gameOver = true;
+        this.isFlying = false;
+    }
     hitBomb(player, bomb) {
         this.physics.pause();
 
@@ -93,7 +98,7 @@ export class BaseLevel extends Scene {
 
         player.anims.play('turn');
 
-        this.gameOver = true;
+        this.doGameOver();
     }
     hitSpikes(player, spikes) {
         this.physics.pause();
@@ -102,7 +107,7 @@ export class BaseLevel extends Scene {
 
         player.anims.play('turn');
 
-        this.gameOver = true;
+        this.doGameOver();
     }
 
     create() {
@@ -159,12 +164,12 @@ export class BaseLevel extends Scene {
         }
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-280);
-            this.player.flipX = true;
+            this.player.movementDirection = "left";
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown) {
             this.player.setVelocityX(280);
-            this.player.flipX = false;
+            this.player.movementDirection = "right";
             this.player.anims.play('right', true);
         }
         else {
@@ -173,7 +178,7 @@ export class BaseLevel extends Scene {
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down) {
+        if (this.cursors.up.isDown && (this.player.body.touching.down || this.isFlying)) {
             this.player.setVelocityY(-350);
         }
     }
