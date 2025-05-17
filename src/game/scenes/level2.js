@@ -28,16 +28,16 @@ export class Level2 extends BaseLevel {
         spikes.create(750, 366, 'spikes').setDepth(-1);
 
 
-        // this.generateStars(15, 90);
+        this.generateStars(15, 90);
 
 
 
         // this.physics.add.collider(this.player, movingPlatform);
-        // this.physics.add.collider(this.stars, this.platforms);
-        // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-        // this.physics.add.overlap(spikes, this.stars, (spikes, star) => {
-        //     star.disableBody(true, true);
-        // }, null, this);
+        this.physics.add.collider(this.stars, this.platforms);
+        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+        this.physics.add.overlap(spikes, this.stars, (spikes, star) => {
+            star.disableBody(true, true);
+        }, null, this);
         // this.physics.add.collider(this.stars, movingPlatform);
         this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
 
