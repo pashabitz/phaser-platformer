@@ -121,7 +121,6 @@ export class Level2 extends BaseLevel {
 
     deactivateJetpack() {
         this.isFlying = false;
-        this.jetpack.setAlpha(0.5); // Make jetpack less visible
         // stop the pulsing effect
         this.tweens.killTweensOf(this.jetpack);
     }

@@ -22,7 +22,7 @@ export class BootScene extends Scene {
     }
 
     create() {
-        this.scene.start("Level2");
+        this.scene.start("Level1");
     }
     update() {
         // Update logic for the boot scene if needed

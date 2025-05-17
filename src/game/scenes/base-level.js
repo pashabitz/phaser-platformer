@@ -90,6 +90,7 @@ export class BaseLevel extends Scene {
     doGameOver() {
         this.gameOver = true;
         this.isFlying = false;
+        this.registry.score = 0;
     }
     hitBomb(player, bomb) {
         this.physics.pause();
