@@ -6,6 +6,7 @@ export class BaseLevel extends Scene {
         this.scoreText = null;
         this.gameOver = false;
         this.isFlying = false;
+        this.isScuba = false;
     }
 
 
@@ -90,25 +91,35 @@ export class BaseLevel extends Scene {
     doGameOver() {
         this.gameOver = true;
         this.isFlying = false;
+        this.isScuba = false;
         this.registry.score = 0;
     }
-    hitBomb(player, bomb) {
+    dieAndTurnColor(player, color) {
         this.physics.pause();
 
-        player.setTint(0xff0000);
+        if (this.isScuba) {
+            player.setTexture('dude').setScale(1).refreshBody();
+            player.body.setSize(32, 48);
+            player.body.setOffset(0, 0);
+            // 100,100 is the offset of the dude with scuba texture
+            player.x -= 100;
+            player.y -= 100;
+        }
+
+        player.setTint(color);
 
         player.anims.play('turn');
 
         this.doGameOver();
     }
+    hitBomb(player, bomb) {
+        this.dieAndTurnColor(player, 0xff0000);
+    }
     hitSpikes(player, spikes) {
-        this.physics.pause();
-
-        player.setTint(0x00ff00);
-
-        player.anims.play('turn');
-
-        this.doGameOver();
+        this.dieAndTurnColor(player, 0x00ff00);
+    }
+    hitWater(player, water) {
+        this.dieAndTurnColor(player, 0x0000ff);
     }
 
     create() {
@@ -166,17 +177,27 @@ export class BaseLevel extends Scene {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-280);
             this.player.movementDirection = "left";
-            this.player.anims.play('left', true);
+            if (!this.isScuba) {
+                this.player.anims.play('left', true);
+            } else {
+                this.player.flipX = true;
+            }
         }
         else if (this.cursors.right.isDown) {
             this.player.setVelocityX(280);
             this.player.movementDirection = "right";
-            this.player.anims.play('right', true);
+            if (!this.isScuba) {
+                this.player.anims.play('right', true);
+            } else {
+                this.player.flipX = false;
+            }
         }
         else {
             this.player.setVelocityX(0);
 
-            this.player.anims.play('turn');
+            if (!this.isScuba) {
+                this.player.anims.play('turn');
+            }
         }
 
         if (this.cursors.up.isDown && (this.player.body.touching.down || this.isFlying)) {

@@ -18,6 +18,9 @@ export class BootScene extends Scene {
             { frameWidth: 32, frameHeight: 48 }
         );
         this.load.image('jetpack', 'assets/jetpack.png');
+        this.load.image('water', 'assets/water.jpg');
+        this.load.image('scuba_tank', 'assets/scuba_tank.png');
+        this.load.image('dude_with_scuba', 'assets/dude_with_scuba.png');
         this.registry.score = 0;
     }
 
