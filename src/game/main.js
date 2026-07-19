@@ -2,6 +2,7 @@ import { Level1 } from './scenes/level1.js';
 import { Level2 } from './scenes/level2.js';
 import { Level3 } from './scenes/level3.js';
 import { Level4 } from './scenes/level4.js';
+import { Level5 } from './scenes/level5.js';
 import { BootScene } from './scenes/boot.js';
 
 import { AUTO, Game } from 'phaser';
@@ -10,7 +11,7 @@ import { AUTO, Game } from 'phaser';
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config = {
     type: AUTO,
-    width: 800,
+    width: 1000,
     height: 600,
     parent: 'game-container',
     backgroundColor: '#028af8',
@@ -30,7 +31,8 @@ const config = {
         Level1,
         Level2,
         Level3,
-        Level4
+        Level4,
+        Level5,
     ]
 };
 

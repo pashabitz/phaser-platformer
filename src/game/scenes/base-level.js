@@ -27,6 +27,7 @@ export class BaseLevel extends Scene {
         bomb.setVelocity(velocityX, 20);
     }
     collectStar(player, star) {
+        this.sound.play('collect_coin');
         star.disableBody(true, true);
         this.registry.score += 10;
         this.scoreText.setText('Score: ' + this.registry.score);
