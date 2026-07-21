@@ -9,6 +9,42 @@ export class BaseLevel extends Scene {
         this.isScuba = false;
     }
 
+    createDinoNpc(x, y, character = 0, direction = 'down') {
+        if (!Number.isInteger(character) || character < 0 || character > 7) {
+            throw new RangeError('Dino character must be an integer from 0 to 7.');
+        }
+
+        const directions = ['down', 'left', 'right', 'up'];
+        const directionRow = directions.indexOf(direction);
+
+        if (directionRow === -1) {
+            throw new RangeError(`Dino direction must be one of: ${directions.join(', ')}.`);
+        }
+
+        directions.forEach((dinoDirection, row) => {
+            const animationKey = `dino-${character}-${dinoDirection}`;
+            const frameStart = (Math.floor(character / 4) * 4 + row) * 12 + (character % 4) * 3;
+
+            if (!this.anims.exists(animationKey)) {
+                this.anims.create({
+                    key: animationKey,
+                    frames: this.anims.generateFrameNumbers('dinos', {
+                        start: frameStart,
+                        end: frameStart + 2
+                    }),
+                    frameRate: 6,
+                    repeat: -1
+                });
+            }
+        });
+
+        const npc = this.physics.add.sprite(x, y, 'dinos');
+        npc.body.setAllowGravity(false);
+        npc.anims.play(`dino-${character}-${direction}`);
+
+        return npc;
+    }
+
 
     restartGame() {
         this.scene.start(this.scene.key);

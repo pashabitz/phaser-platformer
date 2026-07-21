@@ -17,6 +17,10 @@ export class BootScene extends Scene {
             'assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
         );
+        this.load.spritesheet('dinos',
+            'assets/dinos.png',
+            { frameWidth: 48, frameHeight: 48 }
+        );
         this.load.image('jetpack', 'assets/jetpack.png');
         this.load.image('water', 'assets/water.jpg');
         this.load.image('scuba_tank', 'assets/scuba_tank.png');
