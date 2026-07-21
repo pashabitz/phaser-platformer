@@ -40,8 +40,6 @@ export class Level5 extends BaseLevel {
     create() {
         super.create();
 
-        // create text reading "Level 5" at the top center of the screen
-        this.add.text(400, 16, 'Level 5', { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0);
 
         this.platforms.create(0, 600, 'ground').setScale(8, 1).refreshBody();
         this.platforms.create(1120, 400, 'ground').setScale(1, 1).refreshBody();
