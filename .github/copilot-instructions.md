@@ -1,0 +1,1 @@
+- No need to npm run build after every change
