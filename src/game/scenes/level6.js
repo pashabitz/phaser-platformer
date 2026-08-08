@@ -1,5 +1,6 @@
 import { BaseLevel } from "./base-level.js";
 import { Dino } from '../objects/dino';
+import { Wall } from '../objects/wall';
 
 export class Level6 extends BaseLevel {
     constructor() {
@@ -21,10 +22,8 @@ export class Level6 extends BaseLevel {
 
         // left side platform
         this.platforms.create(200, 300, 'ground').setScale(3, 1).refreshBody();
-        this.rammableWall = this.physics.add.staticImage(400, 160, 'ground')
-            .setScale(0.1, 8)
-            .refreshBody();
-        this.physics.add.collider(this.player, this.rammableWall);
+        this.wall = new Wall(this).create(400, 160);
+        this.physics.add.collider(this.player, this.wall.sprite);
         
         // middle platform
         this.platforms.create(900, 450, 'ground').setScale(1, 1).refreshBody();
@@ -34,11 +33,12 @@ export class Level6 extends BaseLevel {
         
         
         this.dino = new Dino(this).create(1400, 100, 6);
-        this.dino.addInteractions(this.rammableWall, this.spikes, this.stars);
+        this.dino.addInteractions(this.wall, this.spikes, this.stars);
 
     }
 
     update() {
         super.update();
+        this.wall.update();
     }
 }

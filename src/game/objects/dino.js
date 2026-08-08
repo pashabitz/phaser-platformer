@@ -3,11 +3,6 @@ export class Dino {
         this.scene = scene;
         this.sprite = null;
         this.attached = false;
-        this.wall = null;
-        this.wallCollider = null;
-        this.wallHealth = 30;
-        this.wallRamDirection = null;
-        this.wallDamageAvailableAt = 0;
     }
 
     create(x, y, character = 0) {
@@ -47,8 +42,7 @@ export class Dino {
     }
 
     addInteractions(wall, spikes, stars) {
-        this.wall = wall;
-        this.wallCollider = this.scene.physics.add.collider(this.sprite, wall, () => this.damageWall());
+        wall.addDino(this);
         this.scene.physics.add.collider(this.sprite, spikes, (dino, hitSpikes) => {
             if (this.attached) {
                 this.scene.hitSpikes(this.scene.player, hitSpikes);
@@ -81,7 +75,6 @@ export class Dino {
         }
 
         this.updateAttached();
-        this.rearmWallRam();
         return true;
     }
 
@@ -131,59 +124,6 @@ export class Dino {
             this.sprite.x,
             this.sprite.y - (this.sprite.displayHeight + this.scene.player.displayHeight) / 2 + 4
         );
-    }
-
-    damageWall() {
-        if (!this.attached || !this.wall || this.wallRamDirection !== null || this.scene.time.now < this.wallDamageAvailableAt) {
-            return;
-        }
-
-        const ramDirection = this.sprite.x < this.wall.x ? 1 : -1;
-        const isRamming = ramDirection === 1
-            ? this.scene.cursors.right.isDown
-            : this.scene.cursors.left.isDown;
-        if (!isRamming) {
-            return;
-        }
-
-        this.scene.sound.play('crack_wall');
-        this.wallRamDirection = ramDirection;
-        this.wallDamageAvailableAt = this.scene.time.now + 200;
-        this.wallHealth -= 10;
-        this.showWallDamage();
-
-        if (this.wallHealth <= 0) {
-            this.wallCollider.destroy();
-            this.wall.destroy();
-            this.wall = null;
-        }
-    }
-
-    rearmWallRam() {
-        if (this.wallRamDirection === null) {
-            return;
-        }
-
-        const movingAway = this.wallRamDirection === 1
-            ? this.scene.cursors.left.isDown
-            : this.scene.cursors.right.isDown;
-        if (movingAway) {
-            this.wallRamDirection = null;
-        }
-    }
-
-    showWallDamage() {
-        const damageLabel = this.scene.add.text(this.wall.x + 24, this.wall.y, '-10', {
-            fontSize: '24px',
-            fill: '#d22'
-        }).setOrigin(0, 0.5);
-        this.scene.tweens.add({
-            targets: damageLabel,
-            y: damageLabel.y - 48,
-            alpha: 0,
-            duration: 600,
-            onComplete: () => damageLabel.destroy()
-        });
     }
 
     tint(color) {
