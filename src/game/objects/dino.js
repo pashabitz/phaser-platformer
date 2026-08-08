@@ -10,17 +10,12 @@ export class Dino {
         this.wallDamageAvailableAt = 0;
     }
 
-    create(x, y, character = 0, direction = 'down') {
+    create(x, y, character = 0) {
         if (!Number.isInteger(character) || character < 0 || character > 7) {
             throw new RangeError('Dino character must be an integer from 0 to 7.');
         }
 
         const directions = ['down', 'left', 'right', 'up'];
-        const directionRow = directions.indexOf(direction);
-        if (directionRow === -1) {
-            throw new RangeError(`Dino direction must be one of: ${directions.join(', ')}.`);
-        }
-
         directions.forEach((dinoDirection, row) => {
             const animationKey = `dino-${character}-${dinoDirection}`;
             const frameStart = (Math.floor(character / 4) * 4 + row) * 12 + (character % 4) * 3;

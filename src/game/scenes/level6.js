@@ -33,7 +33,7 @@ export class Level6 extends BaseLevel {
         this.platforms.create(1400, 400, 'ground').setScale(1, 1).refreshBody();
         
         
-        this.dino = new Dino(this).create(1400, 100, 6, 'left');
+        this.dino = new Dino(this).create(1400, 100, 6);
         this.dino.addInteractions(this.rammableWall, this.spikes, this.stars);
 
     }
