@@ -9,26 +9,26 @@ export class Level4 extends BaseLevel {
     preload() {
     }
 
-    create() {
-        super.create();
-        
-        this.platforms.create(400, 568, 'ground').setScale(6, 2).refreshBody();
-
-        this.platforms.create(700, 380, 'ground');
-        this.platforms.create(1350, 360, 'ground').setScale(1.4, 1).refreshBody();
-
-
-        // vertical
-        this.platforms.create(300, 480, 'ground').setScale(0.1, 4).refreshBody();
-        this.platforms.create(1120, 480, 'ground').setScale(0.1, 4).refreshBody();
-
-        // make a water box using the water asset
+    createWater() {
         this.water = this.physics.add.sprite(710, 490, 'water').setScale(1.28, 0.25).refreshBody();
         this.water.body.setImmovable(true);
         this.water.body.allowGravity = false;
         this.water.setDepth(this.player.depth - 1);
         this.waterCollider = this.physics.add.collider(this.player, this.water, this.hitWater, null, this);
+    }
 
+    create() {
+        super.create({
+            platforms: [
+                { x: 400, y: 568, scaleX: 6, scaleY: 2 },
+                { x: 700, y: 380 },
+                { x: 1350, y: 360, scaleX: 1.4 },
+                { x: 300, y: 480, scaleX: 0.1, scaleY: 4 },
+                { x: 1120, y: 480, scaleX: 0.1, scaleY: 4 }
+            ]
+        });
+
+        this.createWater();
 
         this.scubaTank = new ScubaTank(this, () => {
             this.waterCollider.active = false;
