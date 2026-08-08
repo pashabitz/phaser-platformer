@@ -13,25 +13,21 @@ export class Level6 extends BaseLevel {
 
     create() {
         super.create({
+            platforms: [
+                { x: 0, y: 600, scaleX: 8 },
+                { x: 200, y: 300, scaleX: 3 },
+                { x: 900, y: 450 },
+                { x: 1400, y: 400 }
+            ],
             spikes: [
                 { x: 820, y: 570 },
                 { x: 1020, y: 570 }
             ]
         });
-        this.platforms.create(0, 600, 'ground').setScale(8, 1).refreshBody();
 
-        // left side platform
-        this.platforms.create(200, 300, 'ground').setScale(3, 1).refreshBody();
         this.wall = new Wall(this).create(400, 160);
         this.physics.add.collider(this.player, this.wall.sprite);
-        
-        // middle platform
-        this.platforms.create(900, 450, 'ground').setScale(1, 1).refreshBody();
-        
-        // right side platform
-        this.platforms.create(1400, 400, 'ground').setScale(1, 1).refreshBody();
-        
-        
+
         this.dino = new Dino(this).create(1400, 100, 6);
         this.dino.addInteractions(this.wall, this.spikes, this.stars);
 
