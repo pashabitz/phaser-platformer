@@ -25,11 +25,6 @@ export class Level2 extends BaseLevel {
             ]
         });
 
-        // const movingPlatform = this.makeMovingPlatform(750, 180, 50, 200);
-
-        // this.physics.add.collider(this.player, movingPlatform);
-        // this.physics.add.collider(this.stars, movingPlatform);
-
         this.createJetpack();
 
         // when the player is overlapping with the jetpack, attach it to the player
