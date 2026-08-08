@@ -48,9 +48,9 @@ export class Dino {
                 this.scene.hitSpikes(this.scene.player, hitSpikes);
             }
         });
-        this.scene.physics.add.overlap(this.sprite, stars, (dino, star) => {
+        this.scene.physics.add.overlap(this.sprite, stars.group, (dino, star) => {
             if (this.attached) {
-                this.scene.collectStar(this.scene.player, star);
+                stars.collect(star);
             }
         });
     }

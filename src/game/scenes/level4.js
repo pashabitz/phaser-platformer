@@ -39,8 +39,8 @@ export class Level4 extends BaseLevel {
         });
 
 
-        this.stars.create(1300, 500, 'star');
-        this.stars.create(1400, 500, 'star');
+        this.stars.add(1300, 500);
+        this.stars.add(1400, 500);
 
     }
 

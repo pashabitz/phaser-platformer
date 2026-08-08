@@ -1,11 +1,11 @@
 import { Scene } from "phaser";
 import { Bombs } from '../objects/bombs';
 import { Player } from '../objects/player';
+import { Stars } from '../objects/stars';
 
 export class BaseLevel extends Scene {
     constructor(key) {
         super(key);
-        this.scoreText = null;
         this.gameOver = false;
     }
 
@@ -14,28 +14,6 @@ export class BaseLevel extends Scene {
         this.gameOver = false;
     }
 
-    collectStar(player, star) {
-        this.sound.play('collect_coin');
-        star.disableBody(true, true);
-        this.registry.score += 10;
-        this.scoreText.setText('Score: ' + this.registry.score);
-
-        if (this.stars.countActive(true) === 0) {
-            this.moveToNextLevel();
-        }
-    }
-    generateNewStars() {
-        if (this.stars.countActive(true) === 0) {
-            //  A new batch of stars to collect
-            this.stars.children.iterate(function (child) {
-
-                child.enableBody(true, child.x, 0, true, true);
-
-            });
-
-            this.bombs.add();
-        }
-    }
     moveToNextLevel() {
         const levelNumber = this.scene.key.replace('Level', '');
         const nextLevelNumber = parseInt(levelNumber) + 1;
@@ -69,18 +47,6 @@ export class BaseLevel extends Scene {
         this.movingPlatforms = movingPlatformConfigs.map(({ x, y, speed, offset, xScale = 1 }) => (
             this.makeMovingPlatform(x, y, speed, offset, xScale)
         ));
-    }
-
-    generateStars(numStars, stepX) {
-        this.stars = this.physics.add.group({
-            key: 'star',
-            repeat: numStars,
-            setXY: { x: 12, y: 0, stepX }
-        });
-
-        this.stars.children.iterate(function (child) {
-            child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
-        });
     }
 
     doGameOver() {
@@ -133,26 +99,17 @@ export class BaseLevel extends Scene {
         this.createPlatforms(platforms);
         this.bombs = new Bombs(this, this.player, this.platforms);
         this.bombs.add();
-        this.generateStars(15, 90);
+        this.stars = new Stars(this, this.bombs).create(15, 90);
         this.createSpikes(spikes);
         this.createMovingPlatforms(movingPlatforms);
 
 
         this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.stars, this.platforms);
         this.movingPlatforms.forEach((movingPlatform) => {
             this.physics.add.collider(this.player, movingPlatform);
-            this.physics.add.collider(this.stars, movingPlatform);
         });
-        this.physics.add.overlap(this.spikes, this.stars, (spike, star) => {
-            star.disableBody(true, true);
-        }, null, this);
         this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-
-
-        this.scoreText = this.add.text(16, 16, 'Score: ' + this.registry.score, { fontSize: '32px', fill: '#000' })
-            .setScrollFactor(0);
+        this.stars.addColliders(this.platforms, this.movingPlatforms, this.spikes, this.player);
 
         this.cameras.main.startFollow(this.player);
 
