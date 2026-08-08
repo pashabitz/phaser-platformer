@@ -11,13 +11,14 @@ export class Level1 extends BaseLevel {
 
     
     create() {
-        super.create();
-
-        this.platforms.create(400, 568, 'ground').setScale(6, 2).refreshBody();
-
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(1200, 320, 'ground');
+        super.create({
+            platforms: [
+                { x: 400, y: 568, scaleX: 6, scaleY: 2 },
+                { x: 600, y: 400 },
+                { x: 50, y: 250 },
+                { x: 1200, y: 320 },
+            ]
+        });
 
         const movingPlatform = this.makeMovingPlatform(750, 180, 50, 200);
 
@@ -26,12 +27,9 @@ export class Level1 extends BaseLevel {
         const spikes = this.physics.add.staticGroup();
         spikes.create(600, 366, 'spikes').setDepth(-1);
 
-        this.generateStars(15, 90);
 
 
         this.physics.add.collider(this.player, movingPlatform);
-        this.physics.add.collider(this.stars, this.platforms);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
         this.physics.add.overlap(spikes, this.stars, (spikes, star) => {
             star.disableBody(true, true);
         }, null, this);

@@ -13,12 +13,6 @@ export class Level6 extends BaseLevel {
 
     create() {
         super.create();
-
-        // create text reading "Level 6" at the top center of the screen
-        this.add.text(400, 16, 'Level 6', { fontSize: '32px', fill: '#000' }).setOrigin(0.5, 0);
-
-        
-
         this.platforms.create(0, 600, 'ground').setScale(8, 1).refreshBody();
 
         // left side platform
@@ -45,9 +39,6 @@ export class Level6 extends BaseLevel {
         this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
         this.physics.add.collider(dinoNpc, spikes, this.hitSpikesWithDino, null, this);
 
-        this.generateStars(15, 90);
-        this.physics.add.collider(this.stars, this.platforms);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
         this.physics.add.overlap(dinoNpc, this.stars, this.collectStarWithDino, null, this);
 
     }

@@ -53,10 +53,6 @@ export class Level5 extends BaseLevel {
         this.createLaser(900, 25);
         this.createLaser(1400, 25);
 
-        this.generateStars(15, 90);
-        this.physics.add.collider(this.stars, this.platforms);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-
     }
 
     update() {

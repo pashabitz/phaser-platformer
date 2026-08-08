@@ -54,14 +54,8 @@ export class Level4 extends BaseLevel {
         this.createScubaTank(this.player);
 
 
-        this.generateStars(15, 90);
         this.stars.create(1300, 500, 'star');
         this.stars.create(1400, 500, 'star');
-
-
-        this.physics.add.collider(this.stars, this.platforms);
-
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
 
     }
 

@@ -258,7 +258,15 @@ export class BaseLevel extends Scene {
         this.dieAndTurnColor(player, 0x0000ff);
     }
 
-    create() {
+    createPlatforms(platformConfigs = []) {
+        this.platforms = this.physics.add.staticGroup();
+
+        platformConfigs.forEach(({ x, y, key = 'ground', scaleX = 1, scaleY = 1 }) => {
+            this.platforms.create(x, y, key).setScale(scaleX, scaleY).refreshBody();
+        });
+    }
+
+    create({ platforms = [] } = {}) {
         this.physics.world.setBounds(0, 0, 1600, 600);
         this.cameras.main.setBounds(0, 0, 1600, 600);
 
@@ -271,11 +279,16 @@ export class BaseLevel extends Scene {
 
         // this.addBomb();
 
-        this.platforms = this.physics.add.staticGroup();
+        this.createPlatforms(platforms);
+        this.generateStars(15, 90);
+
 
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.stars, this.platforms);
+        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+
 
         this.scoreText = this.add.text(16, 16, 'Score: ' + this.registry.score, { fontSize: '32px', fill: '#000' })
             .setScrollFactor(0);
