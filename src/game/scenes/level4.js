@@ -1,4 +1,5 @@
 import { BaseLevel } from './base-level';
+import { ScubaTank } from '../objects/scuba_tank';
 
 export class Level4 extends BaseLevel {
     constructor() {
@@ -8,28 +9,6 @@ export class Level4 extends BaseLevel {
     preload() {
     }
 
-    createScubaTank(player) {
-        // Create the scuba tank sprite using proper scuba tank asset
-        this.scubaTank = this.physics.add.sprite(1550, 320, 'scuba_tank');
-        this.scubaTank.setScale(0.05); // Adjust scale as needed for this asset
-
-        this.scubaTank.body.setAllowGravity(false);
-        this.physics.add.overlap(player, this.scubaTank, this.attachScubaTank, null, this);
-    }
-    attachScubaTank(player, scubaTank) {
-        // change the player avatar to be the asset dude_with_scuba
-        player.setTexture('dude_with_scuba')
-            .setScale(0.05)
-            .refreshBody();
-        player.body.setSize(800, 800);
-        player.body.setOffset(100, 100);
-        player.anims.stop(); // Adjust scale as needed for this asset
-        this.isScuba = true;
-        this.waterCollider.active = false;
-
-        // remove the scuba tank from the scene
-        scubaTank.disableBody(true, true);
-    }
     create() {
         super.create();
         
@@ -51,7 +30,13 @@ export class Level4 extends BaseLevel {
         this.waterCollider = this.physics.add.collider(this.player, this.water, this.hitWater, null, this);
 
 
-        this.createScubaTank(this.player);
+        this.scubaTank = new ScubaTank(this, () => {
+            this.waterCollider.active = false;
+        });
+        const scubaTankSprite = this.scubaTank.create(1550, 320);
+        this.physics.add.overlap(this.player, scubaTankSprite, (player) => {
+            this.scubaTank.collect(player);
+        });
 
 
         this.stars.create(1300, 500, 'star');
