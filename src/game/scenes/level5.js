@@ -38,16 +38,16 @@ export class Level5 extends BaseLevel {
         return { laserGun, laserBeam, pulse };
     }
     create() {
-        super.create();
+        super.create({
+            spikes: [
+                { x: 1020, y: 570 },
+                { x: 1220, y: 570 }
+            ]
+        });
 
 
         this.platforms.create(0, 600, 'ground').setScale(8, 1).refreshBody();
         this.platforms.create(1120, 400, 'ground').setScale(1, 1).refreshBody();
-
-        const spikes = this.physics.add.staticGroup();
-        spikes.create(1020, 570, 'spikes').setDepth(-1);
-        spikes.create(1220, 570, 'spikes').setDepth(-1);
-        this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
 
         this.createLaser(600, 25);
         this.createLaser(900, 25);

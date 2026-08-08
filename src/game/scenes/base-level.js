@@ -266,7 +266,15 @@ export class BaseLevel extends Scene {
         });
     }
 
-    create({ platforms = [] } = {}) {
+    createSpikes(spikeConfigs = []) {
+        this.spikes = this.physics.add.staticGroup();
+
+        spikeConfigs.forEach(({ x, y, key = 'spikes', depth = -1 }) => {
+            this.spikes.create(x, y, key).setDepth(depth);
+        });
+    }
+
+    create({ platforms = [], spikes = [] } = {}) {
         this.physics.world.setBounds(0, 0, 1600, 600);
         this.cameras.main.setBounds(0, 0, 1600, 600);
 
@@ -280,13 +288,18 @@ export class BaseLevel extends Scene {
         // this.addBomb();
 
         this.createPlatforms(platforms);
-        this.generateStars(15, 90);
+        this.generateStars(2, 90);
+        this.createSpikes(spikes);
 
 
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.stars, this.platforms);
+        this.physics.add.overlap(this.spikes, this.stars, (spike, star) => {
+            star.disableBody(true, true);
+        }, null, this);
+        this.physics.add.collider(this.player, this.spikes, this.hitSpikes, null, this);
         this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
 
 

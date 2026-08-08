@@ -12,7 +12,12 @@ export class Level6 extends BaseLevel {
     }
 
     create() {
-        super.create();
+        super.create({
+            spikes: [
+                { x: 820, y: 570 },
+                { x: 1020, y: 570 }
+            ]
+        });
         this.platforms.create(0, 600, 'ground').setScale(8, 1).refreshBody();
 
         // left side platform
@@ -33,11 +38,7 @@ export class Level6 extends BaseLevel {
         this.physics.add.overlap(this.player, dinoNpc, this.attachPlayerToDino, null, this);
         this.wallCollider = this.physics.add.collider(dinoNpc, this.rammableWall, this.damageWall, null, this);
 
-        const spikes = this.physics.add.staticGroup();
-        spikes.create(820, 570, 'spikes').setDepth(-1);
-        spikes.create(1020, 570, 'spikes').setDepth(-1);
-        this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
-        this.physics.add.collider(dinoNpc, spikes, this.hitSpikesWithDino, null, this);
+        this.physics.add.collider(dinoNpc, this.spikes, this.hitSpikesWithDino, null, this);
 
         this.physics.add.overlap(dinoNpc, this.stars, this.collectStarWithDino, null, this);
 

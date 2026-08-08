@@ -18,24 +18,17 @@ export class Level2 extends BaseLevel {
                 { x: 700, y: 400 },
                 { x: 1200, y: 250 },
                 { x: 1700, y: 400 },
+            ],
+            spikes: [
+                { x: 590, y: 366 },
+                { x: 750, y: 366 }
             ]
         });
 
         // const movingPlatform = this.makeMovingPlatform(750, 180, 50, 200);
 
-
-
-        const spikes = this.physics.add.staticGroup();
-        spikes.create(590, 366, 'spikes').setDepth(-1);
-        spikes.create(750, 366, 'spikes').setDepth(-1);
-
-
         // this.physics.add.collider(this.player, movingPlatform);
-        this.physics.add.overlap(spikes, this.stars, (spikes, star) => {
-            star.disableBody(true, true);
-        }, null, this);
         // this.physics.add.collider(this.stars, movingPlatform);
-        this.physics.add.collider(this.player, spikes, this.hitSpikes, null, this);
 
         this.createJetpack();
 
