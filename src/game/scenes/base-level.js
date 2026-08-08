@@ -9,134 +9,6 @@ export class BaseLevel extends Scene {
         this.isScuba = false;
     }
 
-    createDinoNpc(x, y, character = 0, direction = 'down') {
-        if (!Number.isInteger(character) || character < 0 || character > 7) {
-            throw new RangeError('Dino character must be an integer from 0 to 7.');
-        }
-
-        const directions = ['down', 'left', 'right', 'up'];
-        const directionRow = directions.indexOf(direction);
-
-        if (directionRow === -1) {
-            throw new RangeError(`Dino direction must be one of: ${directions.join(', ')}.`);
-        }
-
-        directions.forEach((dinoDirection, row) => {
-            const animationKey = `dino-${character}-${dinoDirection}`;
-            const frameStart = (Math.floor(character / 4) * 4 + row) * 12 + (character % 4) * 3;
-
-            if (!this.anims.exists(animationKey)) {
-                this.anims.create({
-                    key: animationKey,
-                    frames: this.anims.generateFrameNumbers('dinos', {
-                        start: frameStart,
-                        end: frameStart + 2
-                    }),
-                    frameRate: 6,
-                    repeat: -1
-                });
-            }
-        });
-
-        const npc = this.physics.add.sprite(x, y, 'dinos');
-        npc.setCollideWorldBounds(true);
-        npc.dinoCharacter = character;
-        npc.idleFrame = Math.floor(character / 4) * 48 + (character % 4) * 3;
-        npc.mode = 'patrolling';
-        npc.patrolLeft = x - 200;
-        npc.patrolRight = x;
-        npc.setVelocityX(-200);
-        npc.anims.play(`dino-${character}-left`, true);
-        this.physics.add.collider(npc, this.platforms);
-        this.dinoNpcs = this.dinoNpcs || [];
-        this.dinoNpcs.push(npc);
-
-        return npc;
-    }
-
-    updateDinoNpcs() {
-        if (!this.dinoNpcs) {
-            return;
-        }
-
-        this.dinoNpcs.forEach((dino) => {
-            if (dino.mode !== 'patrolling') {
-                return;
-            }
-
-            if (dino.x <= dino.patrolLeft) {
-                dino.setVelocityX(200);
-                dino.anims.play(`dino-${dino.dinoCharacter}-right`, true);
-            }
-            else if (dino.x >= dino.patrolRight) {
-                dino.setVelocityX(-200);
-                dino.anims.play(`dino-${dino.dinoCharacter}-left`, true);
-            }
-        });
-    }
-
-    attachPlayerToDino(player, dino) {
-        if (dino.mode === 'attached') {
-            return;
-        }
-
-        dino.mode = 'attached';
-        dino.setVelocity(0, 0);
-        dino.canJump = true;
-        dino.hasLeftGround = false;
-        player.body.setAllowGravity(false);
-        player.setVelocity(0, 0);
-        this.attachedDino = dino;
-    }
-
-    updateAttachedDino() {
-        if (!this.attachedDino) {
-            return false;
-        }
-
-        const dino = this.attachedDino;
-        let velocityX = 0;
-
-        if (this.cursors.left.isDown) {
-            velocityX = -280;
-            this.player.anims.play('left', true);
-            dino.anims.play(`dino-${dino.dinoCharacter}-left`, true);
-        }
-        else if (this.cursors.right.isDown) {
-            velocityX = 280;
-            this.player.anims.play('right', true);
-            dino.anims.play(`dino-${dino.dinoCharacter}-right`, true);
-        }
-        else {
-            this.player.anims.play('turn');
-            if (dino.anims) dino.anims.stop();
-            dino.setFrame(dino.idleFrame);
-        }
-
-        dino.setVelocityX(velocityX);
-        //  onFloor() reads blocked.down, which only static bodies set. touching.down
-        //  is unusable here: the player/dino overlap check also writes it mid-air.
-        const isGrounded = dino.body.onFloor();
-        if (!isGrounded) {
-            dino.hasLeftGround = true;
-        }
-        if (!dino.canJump && dino.hasLeftGround && isGrounded) {
-            dino.canJump = true;
-            dino.hasLeftGround = false;
-        }
-        if (this.cursors.up.isDown && isGrounded && dino.canJump) {
-            dino.canJump = false;
-            dino.setVelocityY(-350);
-        }
-        this.player.setPosition(
-            dino.x,
-            dino.y - (dino.displayHeight + this.player.displayHeight) / 2 + 4
-        );
-
-        return true;
-    }
-
-
     restartGame() {
         this.scene.start(this.scene.key);
         this.gameOver = false;
@@ -244,10 +116,8 @@ export class BaseLevel extends Scene {
 
         player.anims.play('turn');
 
-        if (this.attachedDino) {
-            this.attachedDino.anims.stop();
-            this.attachedDino.setFrame(this.attachedDino.idleFrame);
-            this.attachedDino.setTint(color);
+        if (this.dino?.attached) {
+            this.dino.tint(color);
         }
 
         this.sound.play('death');
@@ -347,8 +217,7 @@ export class BaseLevel extends Scene {
         if (this.gameOver) {
             return;
         }
-        this.updateDinoNpcs();
-        if (this.updateAttachedDino()) {
+        if (this.dino?.update()) {
             return;
         }
         if (this.cursors.left.isDown) {

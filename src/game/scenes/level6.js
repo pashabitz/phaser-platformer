@@ -1,10 +1,9 @@
 import { BaseLevel } from "./base-level.js";
+import { Dino } from '../objects/dino';
+
 export class Level6 extends BaseLevel {
     constructor() {
         super('Level6');
-        this.wallHealth = 30;
-        this.wallRamDirection = null;
-        this.wallDamageAvailableAt = 0;
     }
 
     preload() {
@@ -34,91 +33,12 @@ export class Level6 extends BaseLevel {
         this.platforms.create(1400, 400, 'ground').setScale(1, 1).refreshBody();
         
         
-        const dinoNpc = this.createDinoNpc(1400, 100, 6, 'left');
-        this.physics.add.overlap(this.player, dinoNpc, this.attachPlayerToDino, null, this);
-        this.wallCollider = this.physics.add.collider(dinoNpc, this.rammableWall, this.damageWall, null, this);
-
-        this.physics.add.collider(dinoNpc, this.spikes, this.hitSpikesWithDino, null, this);
-
-        this.physics.add.overlap(dinoNpc, this.stars, this.collectStarWithDino, null, this);
+        this.dino = new Dino(this).create(1400, 100, 6, 'left');
+        this.dino.addInteractions(this.rammableWall, this.spikes, this.stars);
 
     }
 
     update() {
         super.update();
-        this.rearmWallRam();
-    }
-
-    collectStarWithDino(dino, star) {
-        if (dino === this.attachedDino) {
-            this.collectStar(this.player, star);
-        }
-    }
-
-    hitSpikesWithDino(dino, spikes) {
-        if (dino === this.attachedDino) {
-            this.hitSpikes(this.player, spikes);
-        }
-    }
-
-    damageWall(dino, wall) {
-        if (
-            dino !== this.attachedDino ||
-            !this.rammableWall ||
-            this.wallRamDirection !== null ||
-            this.time.now < this.wallDamageAvailableAt
-        ) {
-            return;
-        }
-
-        const ramDirection = dino.x < wall.x ? 1 : -1;
-        const isRamming = ramDirection === 1
-            ? this.cursors.right.isDown
-            : this.cursors.left.isDown;
-
-        if (!isRamming) {
-            return;
-        }
-
-        this.sound.play('crack_wall');
-        this.wallRamDirection = ramDirection;
-        this.wallDamageAvailableAt = this.time.now + 200;
-        this.wallHealth -= 10;
-        this.showWallDamage(wall);
-
-        if (this.wallHealth <= 0) {
-            this.wallCollider.destroy();
-            wall.destroy();
-            this.rammableWall = null;
-        }
-    }
-
-    rearmWallRam() {
-        if (this.wallRamDirection === null || !this.attachedDino) {
-            return;
-        }
-
-        const movingAway = this.wallRamDirection === 1
-            ? this.cursors.left.isDown
-            : this.cursors.right.isDown;
-
-        if (movingAway) {
-            this.wallRamDirection = null;
-        }
-    }
-
-    showWallDamage(wall) {
-        const damageLabel = this.add.text(wall.x + 24, wall.y, '-10', {
-            fontSize: '24px',
-            fill: '#d22'
-        }).setOrigin(0, 0.5);
-
-        this.tweens.add({
-            targets: damageLabel,
-            y: damageLabel.y - 48,
-            alpha: 0,
-            duration: 600,
-            onComplete: () => damageLabel.destroy()
-        });
     }
 }
