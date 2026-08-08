@@ -39,10 +39,101 @@ export class BaseLevel extends Scene {
         });
 
         const npc = this.physics.add.sprite(x, y, 'dinos');
-        npc.body.setAllowGravity(false);
-        npc.anims.play(`dino-${character}-${direction}`);
+        npc.setCollideWorldBounds(true);
+        npc.dinoCharacter = character;
+        npc.idleFrame = Math.floor(character / 4) * 48 + (character % 4) * 3;
+        npc.mode = 'patrolling';
+        npc.patrolLeft = x - 200;
+        npc.patrolRight = x;
+        npc.setVelocityX(-200);
+        npc.anims.play(`dino-${character}-left`, true);
+        this.physics.add.collider(npc, this.platforms);
+        this.dinoNpcs = this.dinoNpcs || [];
+        this.dinoNpcs.push(npc);
 
         return npc;
+    }
+
+    updateDinoNpcs() {
+        if (!this.dinoNpcs) {
+            return;
+        }
+
+        this.dinoNpcs.forEach((dino) => {
+            if (dino.mode !== 'patrolling') {
+                return;
+            }
+
+            if (dino.x <= dino.patrolLeft) {
+                dino.setVelocityX(200);
+                dino.anims.play(`dino-${dino.dinoCharacter}-right`, true);
+            }
+            else if (dino.x >= dino.patrolRight) {
+                dino.setVelocityX(-200);
+                dino.anims.play(`dino-${dino.dinoCharacter}-left`, true);
+            }
+        });
+    }
+
+    attachPlayerToDino(player, dino) {
+        if (dino.mode === 'attached') {
+            return;
+        }
+
+        dino.mode = 'attached';
+        dino.setVelocity(0, 0);
+        dino.canJump = true;
+        dino.hasLeftGround = false;
+        player.body.setAllowGravity(false);
+        player.setVelocity(0, 0);
+        this.attachedDino = dino;
+    }
+
+    updateAttachedDino() {
+        if (!this.attachedDino) {
+            return false;
+        }
+
+        const dino = this.attachedDino;
+        let velocityX = 0;
+
+        if (this.cursors.left.isDown) {
+            velocityX = -280;
+            this.player.anims.play('left', true);
+            dino.anims.play(`dino-${dino.dinoCharacter}-left`, true);
+        }
+        else if (this.cursors.right.isDown) {
+            velocityX = 280;
+            this.player.anims.play('right', true);
+            dino.anims.play(`dino-${dino.dinoCharacter}-right`, true);
+        }
+        else {
+            this.player.anims.play('turn');
+            if (dino.anims) dino.anims.stop();
+            dino.setFrame(dino.idleFrame);
+        }
+
+        dino.setVelocityX(velocityX);
+        //  onFloor() reads blocked.down, which only static bodies set. touching.down
+        //  is unusable here: the player/dino overlap check also writes it mid-air.
+        const isGrounded = dino.body.onFloor();
+        if (!isGrounded) {
+            dino.hasLeftGround = true;
+        }
+        if (!dino.canJump && dino.hasLeftGround && isGrounded) {
+            dino.canJump = true;
+            dino.hasLeftGround = false;
+        }
+        if (this.cursors.up.isDown && isGrounded && dino.canJump) {
+            dino.canJump = false;
+            dino.setVelocityY(-350);
+        }
+        this.player.setPosition(
+            dino.x,
+            dino.y - (dino.displayHeight + this.player.displayHeight) / 2 + 4
+        );
+
+        return true;
     }
 
 
@@ -147,6 +238,14 @@ export class BaseLevel extends Scene {
 
         player.anims.play('turn');
 
+        if (this.attachedDino) {
+            this.attachedDino.anims.stop();
+            this.attachedDino.setFrame(this.attachedDino.idleFrame);
+            this.attachedDino.setTint(color);
+        }
+
+        this.sound.play('death');
+
         this.doGameOver();
     }
     hitBomb(player, bomb) {
@@ -170,7 +269,7 @@ export class BaseLevel extends Scene {
         this.player.setCollideWorldBounds(true);
 
 
-        this.addBomb();
+        // this.addBomb();
 
         this.platforms = this.physics.add.staticGroup();
 
@@ -209,6 +308,10 @@ export class BaseLevel extends Scene {
 
     update() {
         if (this.gameOver) {
+            return;
+        }
+        this.updateDinoNpcs();
+        if (this.updateAttachedDino()) {
             return;
         }
         if (this.cursors.left.isDown) {

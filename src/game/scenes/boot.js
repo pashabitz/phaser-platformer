@@ -27,6 +27,8 @@ export class BootScene extends Scene {
         this.load.image('dude_with_scuba', 'assets/dude_with_scuba.png');
         this.load.image('laser_gun', 'assets/laser-gun.png');
         this.load.audio('collect_coin', 'assets/collect_coin.mp3');
+        this.load.audio('death', 'assets/death.mp3');
+        this.load.audio('crack_wall', 'assets/crack_wall.mp3');
         this.registry.score = 0;
     }
 
