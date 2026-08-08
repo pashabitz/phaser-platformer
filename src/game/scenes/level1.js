@@ -20,13 +20,11 @@ export class Level1 extends BaseLevel {
             ],
             spikes: [
                 { x: 600, y: 366 }
+            ],
+            movingPlatforms: [
+                { x: 750, y: 180, speed: 50, offset: 200 }
             ]
         });
-
-        const movingPlatform = this.makeMovingPlatform(750, 180, 50, 200);
-
-        this.physics.add.collider(this.player, movingPlatform);
-        this.physics.add.collider(this.stars, movingPlatform);
 
     }
 

@@ -18,20 +18,15 @@ export class Level3 extends BaseLevel {
             spikes: [
                 { x: 800, y: 520 },
                 { x: 1100, y: 520 }
+            ],
+            movingPlatforms: [
+                { x: 150, y: 400, speed: 50, offset: 200, xScale: 0.5 },
+                { x: 450, y: 320, speed: 50, offset: -200, xScale: 0.5 },
+                { x: 750, y: 260, speed: 50, offset: 200, xScale: 0.5 },
+                { x: 1050, y: 180, speed: 50, offset: -200, xScale: 0.5 },
+                { x: 950, y: 100, speed: 50, offset: 200, xScale: 0.5 }
             ]
         });
-
-        const movingPlatforms = [];
-        movingPlatforms.push(this.makeMovingPlatform(150, 400, 50, 200, 0.5));
-        movingPlatforms.push(this.makeMovingPlatform(450, 320, 50, -200, 0.5));
-        movingPlatforms.push(this.makeMovingPlatform(750, 260, 50, 200, 0.5));
-        movingPlatforms.push(this.makeMovingPlatform(1050, 180, 50, -200, 0.5));
-        movingPlatforms.push(this.makeMovingPlatform(950, 100, 50, 200, 0.5));
-
-        for (const mp of movingPlatforms) {
-            this.physics.add.collider(this.player, mp);
-            this.physics.add.collider(this.stars, mp);
-        }
 
     }
 

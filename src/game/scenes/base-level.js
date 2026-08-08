@@ -204,6 +204,12 @@ export class BaseLevel extends Scene {
         return movingPlatform;
     }
 
+    createMovingPlatforms(movingPlatformConfigs = []) {
+        this.movingPlatforms = movingPlatformConfigs.map(({ x, y, speed, offset, xScale = 1 }) => (
+            this.makeMovingPlatform(x, y, speed, offset, xScale)
+        ));
+    }
+
     generateStars(numStars, stepX) {
         this.stars = this.physics.add.group({
             key: 'star',
@@ -274,7 +280,7 @@ export class BaseLevel extends Scene {
         });
     }
 
-    create({ platforms = [], spikes = [] } = {}) {
+    create({ platforms = [], spikes = [], movingPlatforms = [] } = {}) {
         this.physics.world.setBounds(0, 0, 1600, 600);
         this.cameras.main.setBounds(0, 0, 1600, 600);
 
@@ -288,14 +294,19 @@ export class BaseLevel extends Scene {
         // this.addBomb();
 
         this.createPlatforms(platforms);
-        this.generateStars(2, 90);
+        this.generateStars(15, 90);
         this.createSpikes(spikes);
+        this.createMovingPlatforms(movingPlatforms);
 
 
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.stars, this.platforms);
+        this.movingPlatforms.forEach((movingPlatform) => {
+            this.physics.add.collider(this.player, movingPlatform);
+            this.physics.add.collider(this.stars, movingPlatform);
+        });
         this.physics.add.overlap(this.spikes, this.stars, (spike, star) => {
             star.disableBody(true, true);
         }, null, this);
