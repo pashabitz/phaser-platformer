@@ -20,13 +20,7 @@ export class ScubaTank {
         }
 
         this.collected = true;
-        player.setTexture('dude_with_scuba')
-            .setScale(0.05)
-            .refreshBody();
-        player.body.setSize(800, 800);
-        player.body.setOffset(100, 100);
-        player.anims.stop();
-        this.scene.isScuba = true;
+        player.equipScuba();
         this.onCollect();
         this.sprite.disableBody(true, true);
     }

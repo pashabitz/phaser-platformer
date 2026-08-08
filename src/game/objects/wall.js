@@ -26,8 +26,8 @@ export class Wall {
         }
 
         const movingAway = this.ramDirection === 1
-            ? this.scene.cursors.left.isDown
-            : this.scene.cursors.right.isDown;
+            ? this.scene.player.cursors.left.isDown
+            : this.scene.player.cursors.right.isDown;
         if (movingAway) {
             this.ramDirection = null;
         }
@@ -40,8 +40,8 @@ export class Wall {
 
         const ramDirection = dino.sprite.x < this.sprite.x ? 1 : -1;
         const isRamming = ramDirection === 1
-            ? this.scene.cursors.right.isDown
-            : this.scene.cursors.left.isDown;
+            ? this.scene.player.cursors.right.isDown
+            : this.scene.player.cursors.left.isDown;
         if (!isRamming) {
             return;
         }

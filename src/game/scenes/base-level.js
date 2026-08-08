@@ -1,12 +1,11 @@
 import { Scene } from "phaser";
+import { Player } from '../objects/player';
 
 export class BaseLevel extends Scene {
     constructor(key) {
         super(key);
         this.scoreText = null;
         this.gameOver = false;
-        this.isFlying = false;
-        this.isScuba = false;
     }
 
     restartGame() {
@@ -96,25 +95,12 @@ export class BaseLevel extends Scene {
 
     doGameOver() {
         this.gameOver = true;
-        this.isFlying = false;
-        this.isScuba = false;
+        this.player.resetAbilities();
         this.registry.score = 0;
     }
     dieAndTurnColor(player, color) {
         this.physics.pause();
-
-        if (this.isScuba) {
-            player.setTexture('dude').setScale(1).refreshBody();
-            player.body.setSize(32, 48);
-            player.body.setOffset(0, 0);
-            // 100,100 is the offset of the dude with scuba texture
-            player.x -= 100;
-            player.y -= 100;
-        }
-
-        player.setTint(color);
-
-        player.anims.play('turn');
+        player.die(color);
 
         if (this.dino?.attached) {
             this.dino.tint(color);
@@ -156,9 +142,7 @@ export class BaseLevel extends Scene {
 
         this.bombs = this.physics.add.group();
 
-        this.player = this.physics.add.sprite(100, 450, 'dude');
-        this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
+        this.player = new Player(this, 100, 450);
 
 
         // this.addBomb();
@@ -189,26 +173,6 @@ export class BaseLevel extends Scene {
 
         this.cameras.main.startFollow(this.player);
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.cursors = this.input.keyboard.createCursorKeys();
         this.input.on('pointerdown', this.restartGame, this);
 
     }
@@ -220,34 +184,6 @@ export class BaseLevel extends Scene {
         if (this.dino?.update()) {
             return;
         }
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-280);
-            this.player.movementDirection = "left";
-            if (!this.isScuba) {
-                this.player.anims.play('left', true);
-            } else {
-                this.player.flipX = true;
-            }
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(280);
-            this.player.movementDirection = "right";
-            if (!this.isScuba) {
-                this.player.anims.play('right', true);
-            } else {
-                this.player.flipX = false;
-            }
-        }
-        else {
-            this.player.setVelocityX(0);
-
-            if (!this.isScuba) {
-                this.player.anims.play('turn');
-            }
-        }
-
-        if (this.cursors.up.isDown && (this.player.body.touching.down || this.isFlying)) {
-            this.player.setVelocityY(-350);
-        }
+        this.player.update();
     }
 }

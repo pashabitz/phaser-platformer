@@ -91,12 +91,12 @@ export class Dino {
 
     updateAttached() {
         let velocityX = 0;
-        if (this.scene.cursors.left.isDown) {
+        if (this.scene.player.cursors.left.isDown) {
             velocityX = -280;
             this.scene.player.anims.play('left', true);
             this.sprite.anims.play(`dino-${this.sprite.dinoCharacter}-left`, true);
         }
-        else if (this.scene.cursors.right.isDown) {
+        else if (this.scene.player.cursors.right.isDown) {
             velocityX = 280;
             this.scene.player.anims.play('right', true);
             this.sprite.anims.play(`dino-${this.sprite.dinoCharacter}-right`, true);
@@ -116,7 +116,7 @@ export class Dino {
             this.sprite.canJump = true;
             this.sprite.hasLeftGround = false;
         }
-        if (this.scene.cursors.up.isDown && isGrounded && this.sprite.canJump) {
+        if (this.scene.player.cursors.up.isDown && isGrounded && this.sprite.canJump) {
             this.sprite.canJump = false;
             this.sprite.setVelocityY(-350);
         }

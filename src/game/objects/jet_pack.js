@@ -24,7 +24,7 @@ export class JetPack {
         this.attached = true;
         this.attachedAt = Date.now();
         this.fuelRemaining = 100;
-        this.scene.isFlying = true;
+        player.isFlying = true;
         this.fuelText = this.scene.add.text(16, 50, 'Fuel: 100', { fontSize: '32px', fill: '#000' })
             .setScrollFactor(0);
 
@@ -62,11 +62,11 @@ export class JetPack {
         const facesLeft = player.movementDirection === 'left';
         this.sprite.setPosition(player.x + (facesLeft ? 20 : -20), player.y + 5);
         this.sprite.setFlipX(facesLeft);
-        this.sprite.setAlpha(this.scene.isFlying ? 1 : 0.8);
+        this.sprite.setAlpha(player.isFlying ? 1 : 0.8);
     }
 
     deactivate() {
-        this.scene.isFlying = false;
+        this.scene.player.isFlying = false;
         this.scene.tweens.killTweensOf(this.sprite);
     }
 }
