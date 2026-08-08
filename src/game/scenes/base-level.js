@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { Bombs } from '../objects/bombs';
 import { Player } from '../objects/player';
 
 export class BaseLevel extends Scene {
@@ -13,17 +14,6 @@ export class BaseLevel extends Scene {
         this.gameOver = false;
     }
 
-    addBomb() {
-        var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = this.bombs.create(x, 16, 'bomb');
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        const velocityX = Phaser.Math.Between(0, 1) === 0
-            ? Phaser.Math.Between(-200, -100)
-            : Phaser.Math.Between(100, 200);
-        bomb.setVelocity(velocityX, 20);
-    }
     collectStar(player, star) {
         this.sound.play('collect_coin');
         star.disableBody(true, true);
@@ -43,7 +33,7 @@ export class BaseLevel extends Scene {
 
             });
 
-            this.addBomb();
+            this.bombs.add();
         }
     }
     moveToNextLevel() {
@@ -110,9 +100,6 @@ export class BaseLevel extends Scene {
 
         this.doGameOver();
     }
-    hitBomb(player, bomb) {
-        this.dieAndTurnColor(player, 0xff0000);
-    }
     hitSpikes(player, spikes) {
         this.dieAndTurnColor(player, 0x00ff00);
     }
@@ -140,21 +127,17 @@ export class BaseLevel extends Scene {
         this.physics.world.setBounds(0, 0, 1600, 600);
         this.cameras.main.setBounds(0, 0, 1600, 600);
 
-        this.bombs = this.physics.add.group();
-
         this.player = new Player(this, 100, 450);
 
 
-        // this.addBomb();
-
         this.createPlatforms(platforms);
+        this.bombs = new Bombs(this, this.player, this.platforms);
+        this.bombs.add();
         this.generateStars(15, 90);
         this.createSpikes(spikes);
         this.createMovingPlatforms(movingPlatforms);
 
 
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-        this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.stars, this.platforms);
         this.movingPlatforms.forEach((movingPlatform) => {
