@@ -1,11 +1,14 @@
 export class Bombs {
-    constructor(scene, player, platforms) {
+    constructor(scene, player, platforms, movingPlatforms = []) {
         this.scene = scene;
         this.player = player;
         this.group = scene.physics.add.group();
 
         scene.physics.add.collider(player, this.group, this.hitPlayer, null, this);
         scene.physics.add.collider(this.group, platforms);
+        movingPlatforms.forEach((movingPlatform) => {
+            scene.physics.add.collider(this.group, movingPlatform);
+        });
     }
 
     add() {

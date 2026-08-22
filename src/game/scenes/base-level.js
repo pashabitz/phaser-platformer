@@ -97,11 +97,11 @@ export class BaseLevel extends Scene {
 
 
         this.createPlatforms(platforms);
-        this.bombs = new Bombs(this, this.player, this.platforms);
+        this.createMovingPlatforms(movingPlatforms);
+        this.bombs = new Bombs(this, this.player, this.platforms, this.movingPlatforms);
         this.bombs.add();
         this.stars = new Stars(this, this.bombs).create(15, 90);
         this.createSpikes(spikes);
-        this.createMovingPlatforms(movingPlatforms);
 
 
         this.physics.add.collider(this.player, this.platforms);
