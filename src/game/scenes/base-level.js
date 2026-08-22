@@ -89,11 +89,16 @@ export class BaseLevel extends Scene {
         });
     }
 
-    create({ platforms = [], spikes = [], movingPlatforms = [] } = {}) {
-        this.physics.world.setBounds(0, 0, 1600, 600);
-        this.cameras.main.setBounds(0, 0, 1600, 600);
+    create({ 
+        platforms = [],
+        spikes = [],
+        movingPlatforms = [],
+        playerSpawn = { x: 100, y: 450 },
+        bounds = { x: 0, y: 0, width: 1600, height: 600 } } = {}) {
+        this.physics.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.cameras.main.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 
-        this.player = new Player(this, 100, 450);
+        this.player = new Player(this, playerSpawn.x, playerSpawn.y);
 
 
         this.createPlatforms(platforms);
