@@ -4,6 +4,7 @@ import { Level3 } from './scenes/level3.js';
 import { Level4 } from './scenes/level4.js';
 import { Level5 } from './scenes/level5.js';
 import { Level6 } from './scenes/level6.js';
+import { Level7 } from './scenes/level7.js';
 import { BootScene } from './scenes/boot.js';
 
 import { AUTO, Game } from 'phaser';
@@ -35,6 +36,7 @@ const config = {
         Level4,
         Level5,
         Level6,
+        Level7,
     ]
 };
 
